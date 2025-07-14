@@ -26,7 +26,7 @@ public class MessageProcessorService {
       log.info("Detected {} credit card(s) in message", instances);
 
       dbLayer.saveDetection(
-          new DetectionInstance("1", message.sender(), Instant.ofEpochMilli(message.sentTime()),
+          new DetectionInstance(message.sender(), Instant.ofEpochMilli(message.sentTime()),
               instances));
     } else {
       log.info("No credit cards detected in message");
