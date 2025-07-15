@@ -11,6 +11,8 @@ You can run this project via:
 > java -jar target/CoroAssignment-0.0.1-SNAPSHOT.jar
 ```
 
+You must have a mongodb instance running at 27017 and kafka at 9092. These are default ports.
+
 Also, I've been using Intellij and you can open it there, and it should figure out how to run it.
 Have a nice time!
 
@@ -78,3 +80,8 @@ faster to write to Kafka. If there's some reason we only have one machine which 
 other machines available to do database writes, this may be useful. On the other hand, this is a
 strange scenario, and it increases the complexity of the system (which is easy, since this system
 starts out quite simple) and may not be worth it, depending on actual constraints.
+
+This version of the assignment uses a message broker. Performance is similar, but it does give an
+idea how the system might be broken down if need be. The message listener can be moved into a
+separate project which can do nothing but pull messages off the queue, and this can be scaled
+separately as need be.
