@@ -1,6 +1,7 @@
 package org.example.coroassignment;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,5 +43,10 @@ public class MessageProcessorService {
     }
 
     return instances;
+  }
+
+  public Collection<DetectionInstance> getDetections(long timeFrom, long timeTo) {
+    return dbLayer.getDetections(Instant.ofEpochMilli(timeFrom),
+        Instant.ofEpochMilli(timeTo));
   }
 }

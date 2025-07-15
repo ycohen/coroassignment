@@ -31,8 +31,8 @@ public class AppRestController {
   public ResponseEntity<?> detections(@RequestParam(name = "timeFrom") long timeFrom,
       @RequestParam(name = "timeTo") long timeTo) {
     log.info("Received detections request");
-    Collection<DetectionInstance> instances = dbLayer.getDetections(Instant.ofEpochMilli(timeFrom),
-        Instant.ofEpochMilli(timeTo));
+
+    Collection<DetectionInstance> instances = messageProcessorService.getDetections(timeFrom, timeTo);
 
     return ResponseEntity.ok(instances);
   }
