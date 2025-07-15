@@ -42,8 +42,8 @@ You can replicate the database and reads will go to the replicas, but only one c
 to. If performance problems are due to high read volumes, this could help us. If it's due to high
 write volumes, we'd have to explore other options.
 Sharding is one possibility. Based on the kind of queries we're doing on the database right now, it
-seems like ranged sharding, which would distribute the data into different shards based on the sent
-time.
+seems like ranged sharding, which could distribute the data into different shards based on the sent
+time, would be appropriate.
 
 ### Expected Performance Issues
 
@@ -58,30 +58,30 @@ the number of returned results to some amount, like 100 detections.
 
 It's unclear that caching would help this particular system. Caching helps when you get many of the
 same request repeatedly. If that's the case here, great, but I don't see a reason to expect it. My
-code makes requests randomly, although there's no reason to think it behaves like real-world people.
-The other problem with caching is that exactly the same request may return a different result if
-more data has come in. The user seems to provide the sent time, which means any result could change
-at any time. If sent times always go up (which seems reasonable), then perhaps queries regarding
-past times can be cached. And maybe we expect certain queries (say, from the start of one month to
-the start of the next) to be particularly in-demand. and caching those may be reasonable.
+test code makes requests randomly, although there's no reason to think it behaves like real-world
+people. The other problem with caching is that exactly the same request may return a different
+result if more data has come in. The user seems to provide the sent time, which means any result
+could change at any time. If sent times always go up (which seems reasonable), then perhaps queries
+regarding past times can be cached. If we expect certain queries (say, from the start of one month
+to the start of the next) to be particularly in-demand, and caching those may be reasonable.
 
 #### A Message Broker
 
-A message broker is useful when processed need to communicate with each other, but not necessarily
+A message broker is useful when processes need to communicate with each other, but not necessarily
 synchronously.
 This is a very small system, so message broker doesn't have much of a role to play here. The
-/detections endpoint must return data synchronously (although data export services from some
+`/detections` endpoint must return data synchronously (although data export services from some
 companies allow you to request data and let you know later when it's ready. We could do that.)
 
-Regarding the /message endpoint, we could use a message queue. Instead of writing straight to the
+Regarding the `/message` endpoint, we could use a message queue. Instead of writing straight to the
 database, we could write to Kafka (or whichever message broker), and have a consumer pick it up and
 write it to that database. That would free threads in the first jvm to handle http requests if it's
-faster to write to Kafka. If there's some reason we only have one machine which is web-facing, but
+faster to write to Kafka than to MongoDb. If there's some reason we only have one machine which is web-facing, but
 other machines available to do database writes, this may be useful. On the other hand, this is a
 strange scenario, and it increases the complexity of the system (which is easy, since this system
 starts out quite simple) and may not be worth it, depending on actual constraints.
 
-This version of the assignment uses a message broker. Performance is similar, but it does give an
+This version of the assignment uses a message broker. Performance is similar to without, but it does give an
 idea how the system might be broken down if need be. The message listener can be moved into a
 separate project which can do nothing but pull messages off the queue, and this can be scaled
-separately as need be.
+separately as need be. See the code as of commit 868a937 to see it without using Kafka.
